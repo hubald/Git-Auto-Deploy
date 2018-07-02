@@ -4,7 +4,7 @@ from .gitlab import GitLabRequestParser
 from .gitlabci import GitLabCIRequestParser
 from .generic import GenericRequestParser
 from .coding import CodingRequestParser
-
+from .vsts import VstsRequestParser
 
 def get_service_handler(request_headers, request_body, action):
     """Parses the incoming request and attempts to determine whether
@@ -48,6 +48,11 @@ def get_service_handler(request_headers, request_body, action):
 
         action.log_info("Received event from unknown origin.")
         return GenericRequestParser
+
+    # Assume VSTS if the publisher ID "tfs" is found in payload.
+    elif content_type == "application/json; charset=utf-8" and payload['publisherId'] == "tfs":
+
+        return VstsRequestParser
 
     action.log_error("Unable to recognize request origin. Don't know how to handle the request.")
     return
