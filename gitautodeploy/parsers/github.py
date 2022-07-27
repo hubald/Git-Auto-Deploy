@@ -33,8 +33,8 @@ class GitHubRequestParser(WebhookRequestParserBase):
         for repo_config in repo_configs:
 
             # Validate secret token if present
-            if 'secret-token' in repo_config and 'x-hub-signature' in request_headers:
-                if not self.verify_signature(repo_config['secret-token'], request_body, request_headers['x-hub-signature']):
+            if 'secret-token' in repo_config and 'x-hub-signature-256' in request_headers:
+                if not self.verify_signature(repo_config['secret-token'], request_body, request_headers['x-hub-signature-256']):
                     action.log_info("Request signature does not match the 'secret-token' configured for repository %s." % repo_config['url'])
                     return False
 
@@ -44,5 +44,5 @@ class GitHubRequestParser(WebhookRequestParserBase):
         import hashlib
         import hmac
 
-        result = "sha1=" + hmac.new(str(token), body, hashlib.sha1).hexdigest()
-        return result == signature
+        result = "sha256=" + hmac.new(token.encode('utf-8'), body.encode('utf-8'), hashlib.sha256).hexdigest()
+        return hmac.compare_digest(result, signature)
