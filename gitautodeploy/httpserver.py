@@ -100,6 +100,7 @@ def WebhookRequestHandlerFactory(config, event_store, server_status, is_https=Fa
 
             content_length = int(self.headers.get('content-length'))
             request_body = self.rfile.read(content_length).decode('utf-8')
+            full_request_body = request_body
 
             # Extract request headers and make all keys to lowercase (makes them easier to compare)
             request_headers = dict(self.headers)
@@ -169,7 +170,7 @@ def WebhookRequestHandlerFactory(config, event_store, server_status, is_https=Fa
 
                 action.log_info("%s candidates matches after applying filters" % len(projects))
 
-                if not service_handler.validate_request(request_headers, request_body, projects, action):
+                if not service_handler.validate_request(request_headers, full_request_body, projects, action):
                     self.send_error(400, 'Bad request')
                     test_case['expected']['status'] = 400
                     action.log_warning("Request was rejected due to a secret token mismatch")
