@@ -1,8 +1,8 @@
 import collections
-from ..wrappers import GitWrapper
-from ..lock import Lock
-from ..wrappers import GitWrapper
-from ..events import DeployEvent
+from wrappers import GitWrapper
+from lock import Lock
+from wrappers import GitWrapper
+from events import DeployEvent
 
 
 class Project(collections.MutableMapping):

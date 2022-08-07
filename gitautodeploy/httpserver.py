@@ -94,12 +94,13 @@ def WebhookRequestHandlerFactory(config, event_store, server_status, is_https=Fa
             import logging
             import json
             import threading
-            from urlparse import parse_qs
+            from urllib.parse import parse_qs
 
             logger = logging.getLogger()
 
             content_length = int(self.headers.get('content-length'))
             request_body = self.rfile.read(content_length).decode('utf-8')
+            full_request_body = request_body
 
             # Extract request headers and make all keys to lowercase (makes them easier to compare)
             request_headers = dict(self.headers)
@@ -113,7 +114,7 @@ def WebhookRequestHandlerFactory(config, event_store, server_status, is_https=Fa
 
             # Payloads from GitHub can be delivered as form data. Test the request for this pattern and extract json payload
             if request_headers['content-type'] == 'application/x-www-form-urlencoded':
-                res = parse_qs(request_body.decode('utf-8'))
+                res = parse_qs(request_body)
                 if 'payload' in res and len(res['payload']) == 1:
                     request_body = res['payload'][0]
 
@@ -169,7 +170,7 @@ def WebhookRequestHandlerFactory(config, event_store, server_status, is_https=Fa
 
                 action.log_info("%s candidates matches after applying filters" % len(projects))
 
-                if not service_handler.validate_request(request_headers, request_body, projects, action):
+                if not service_handler.validate_request(request_headers, full_request_body, projects, action):
                     self.send_error(400, 'Bad request')
                     test_case['expected']['status'] = 400
                     action.log_warning("Request was rejected due to a secret token mismatch")
