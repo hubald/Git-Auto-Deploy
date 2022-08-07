@@ -5,7 +5,7 @@ from wrappers import GitWrapper
 from events import DeployEvent
 
 
-class Project(collections.MutableMapping):
+class Project(collections.abc.MutableMapping):
 
     """A dictionary that applies an arbitrary key-altering
        function before accessing the keys"""
