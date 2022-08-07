@@ -6,8 +6,12 @@ __pycache__/
 # C extensions
 *.so
 
+*.bak
+* - Kopie.*
+
 # Distribution / packaging
 .Python
+venv/
 env/
 build/
 develop-eggs/
