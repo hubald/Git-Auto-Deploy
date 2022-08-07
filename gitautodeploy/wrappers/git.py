@@ -21,10 +21,9 @@ class GitWrapper():
         # On Windows, bash command needs to be run using bash.exe. This assumes bash.exe
         # (typically installed under C:\Program Files\Git\bin) is in the system PATH.
         if platform.system().lower() == "windows":
-            commands.append('bash -c "cd \\"' + repo_config['path'] + '\\" && unset GIT_DIR"')
+            commands.append('set GIT_DIR=')
         else:
             commands.append('unset GIT_DIR')
-
         if "prepull" in repo_config:
             commands.append(repo_config['prepull'])
 
@@ -72,7 +71,7 @@ class GitWrapper():
         # On Windows, bash command needs to be run using bash.exe. This assumes bash.exe
         # (typically installed under C:\Program Files\Git\bin) is in the system PATH.
         if platform.system().lower() == "windows":
-            commands.append('bash -c "cd \\"' + repo_config['path'] + '\\" && unset GIT_DIR"')
+            commands.append('set GIT_DIR=')
         else:
             commands.append('unset GIT_DIR')
 
@@ -120,7 +119,10 @@ class GitWrapper():
         commands = []
         if "prepull" in repo_config:
             commands.append(repo_config['prepull'])
-        commands.append('unset GIT_DIR')
+        if platform.system().lower() == "windows":
+            commands.append('set GIT_DIR=')
+        else:
+            commands.append('unset GIT_DIR')
         commands.append('git clone --recursive ' + repo_config['url'] + ' -b ' + repo_config['branch'] + ' ' + repo_config['path'])
 
         if "postpull" in repo_config:
