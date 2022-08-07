@@ -1,11 +1,16 @@
+import sys
 import collections
+if sys.version_info.major == 3 and sys.version_info.minor >= 10:
+    from collections.abc import MutableMapping
+else:
+    from collections import MutableMapping
 from wrappers import GitWrapper
 from lock import Lock
 from wrappers import GitWrapper
 from events import DeployEvent
 
 
-class Project(collections.MutableMapping):
+class Project(MutableMapping):
 
     """A dictionary that applies an arbitrary key-altering
        function before accessing the keys"""
